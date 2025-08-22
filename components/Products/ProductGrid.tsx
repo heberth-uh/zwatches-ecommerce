@@ -1,34 +1,16 @@
-"use client";
-
-import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import { Product, ProductGridProps } from "./types";
 
-interface Product{
-  _id: string;
-  image: string;
-  name: string;
-  price: number;
-  link: string;
-}
-
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    axios
-      .get("/api/fetch-products")
-      .then((response) => setProducts(response.data.products));
-  }, []);
-
+const ProductGrid = ({products}: ProductGridProps) => {
+  console.log(typeof(products));
   return (
     <div
       id="product"
       className="px-4 md:px-12 py-5 md:py-10 flex justify-center items-center"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
-        {products.map((product: Product) => (
+        {products?.map((product: Product) => (
           <Link href={`/product/${product._id}`} key={product._id}>
             <Image
               src={product.image}
@@ -49,4 +31,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default ProductGrid;
