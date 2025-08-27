@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Product, ProductGridProps } from "./types";
 
 const ProductGrid = ({products}: ProductGridProps) => {
-  console.log(typeof(products));
   return (
     <div
       id="product"
