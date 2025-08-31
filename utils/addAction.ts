@@ -4,7 +4,7 @@ import { connectDB } from "@/app/api/db/connectDB";
 import cloudinary from "./cloudinary";
 import Product from "@/app/api/models/product.model";
 
-export async function addAction(formData: FormData) {
+export async function addAction(formData: FormData, _?: string) {
   try {
     const image = formData.get("image") as File;
     const name = formData.get("name");
@@ -20,6 +20,7 @@ export async function addAction(formData: FormData) {
     await connectDB();
 
     // Image processes
+    // TODO: Craete a utility to reuse this
     const arrayBuffer = await image.arrayBuffer();
     const buffer = new Uint8Array(arrayBuffer);
     const imageResponse: any = await new Promise((resolve, reject) => {
@@ -41,14 +42,17 @@ export async function addAction(formData: FormData) {
     console.log("Image response: ", imageResponse);
 
     // Store in Data base
-    await Product.create({
+    const product = await Product.create({
       image: imageResponse.secure_url,
       name,
       price,
       link,
       description,
     });
-    return { success: "Product added successfully" };
+    return {
+      success: "Product added successfully",
+      id: product._id.toString(),
+    };
   } catch (error: any) {
     return { error: `Something went wrong: ${error.message}` };
   }

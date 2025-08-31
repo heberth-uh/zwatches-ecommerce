@@ -1,21 +1,56 @@
 import { connectDB } from "@/app/api/db/connectDB";
 import Product from "@/app/api/models/product.model";
+import cloudinary from "@/utils/cloudinary";
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ productId: string }> }
 ) {
-    await connectDB();
-    const productId = (await params).productId;
+  await connectDB();
+  const { productId } = await params;
 
-    try {
-        const product = await Product.findById(productId);
-        if (!product) {
-            return Response.json({message: 'Product not found.'}, {status: 400});
-        }
-
-        return Response.json({product}, {status: 200});
-    } catch (error: any) {
-        return Response.json({message: error.message}, {status: 400})
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return Response.json({ message: "Product not found." }, { status: 400 });
     }
-};
+
+    return Response.json({ product }, { status: 200 });
+  } catch (error: any) {
+    return Response.json({ message: error.message }, { status: 400 });
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ productId: string }> }
+) {
+  await connectDB();
+
+  const { productId } = await params;
+  try {
+    const product = await Product.findById(productId);
+    if (!product) {
+      return Response.json({ message: "Product not found." }, { status: 404 });
+    }
+
+    // Delete image in cloudinary first
+    const parts = product.image.split("/");
+    const fileName = parts[parts.length - 1];
+    const imageId = fileName.split(".")[0];
+    cloudinary.uploader
+      .destroy(`watches/${imageId}`)
+      .then((res) => console.log("Result", res));
+    ("");
+
+    // Delete from DB
+    await Product.findByIdAndDelete(productId);
+
+    return Response.json(
+      { message: "Product deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return Response.json({ message: error.message }, { status: 400 });
+  }
+}

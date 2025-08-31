@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { type Product } from "../Products/types";
+import toast from "react-hot-toast";
 
 
 const Product = () => {
@@ -24,6 +25,16 @@ const Product = () => {
     return <p>Loading...</p>;
   }
 
+  const handleDelete = async () => {
+    try {
+      await axios.delete(`/api/product/${params.productId}`);
+      toast.success('Product deleted successfully');
+      router.push('/');
+    } catch (error : any) {
+      toast.error('Failed to delete product');
+    }
+  }
+
   return (
     <section className="px-4 py-10 md:px-12 bg-[#f8f9fa]">
       <p className="cursor-pointer px-3" onClick={() => router.back()}>
@@ -36,7 +47,7 @@ const Product = () => {
           alt="Product image"
           width={1000}
           height={1000}
-          className="max-w-full md:max-w-xl md:min-w-[30rem] min-h-[28rem] max-h-[28rem] object-cover object-center basis-1/2"
+          className="max-w-full md:max-w-xl md:min-w-[30rem] min-h-[28rem] max-h-[28rem] object-contain object-center basis-1/2"
         />
         <div className="basis-1/2 self-start py-8">
           <div className="flex justify-between items-center">
@@ -54,7 +65,8 @@ const Product = () => {
                   <Link href={`/product/${product._id}/update`}>
                     <p className="px-5 py-2 border-b border-gray-300">Update</p>
                   </Link>
-                  <p className="px-5 py-2 border-b border-gray-300 text-red-500 cursor-pointer">
+                  <p className="px-5 py-2 border-b border-gray-300 text-red-500 cursor-pointer"
+                  onClick={handleDelete}>
                     Delete
                   </p>
                 </div>
