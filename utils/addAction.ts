@@ -1,7 +1,7 @@
 "use server";
 
 import { connectDB } from "@/app/api/db/connectDB";
-import cloudinary from "./cloudinary";
+import { uploadImage } from "./cloudinary";
 import Product from "@/app/api/models/product.model";
 
 export async function addAction(formData: FormData, _?: string) {
@@ -20,26 +20,7 @@ export async function addAction(formData: FormData, _?: string) {
     await connectDB();
 
     // Image processes
-    // TODO: Craete a utility to reuse this
-    const arrayBuffer = await image.arrayBuffer();
-    const buffer = new Uint8Array(arrayBuffer);
-    const imageResponse: any = await new Promise((resolve, reject) => {
-      cloudinary.uploader
-        .upload_stream(
-          {
-            resource_type: "auto",
-            folder: "nextjs-ecommerce",
-          },
-          async (error, result) => {
-            if (error) {
-              return reject(error.message);
-            }
-            return resolve(result);
-          }
-        )
-        .end(buffer);
-    });
-    console.log("Image response: ", imageResponse);
+    const imageResponse: any = await uploadImage(image);
 
     // Store in Data base
     const product = await Product.create({

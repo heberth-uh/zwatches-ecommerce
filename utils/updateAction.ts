@@ -1,7 +1,7 @@
 "use server";
 
 import { connectDB } from "@/app/api/db/connectDB";
-import cloudinary from "./cloudinary";
+import { deleteImageFromUrl, uploadImage } from "./cloudinary";
 import Product from "@/app/api/models/product.model";
 
 export async function updateAction(formData: FormData, id: string) {
@@ -40,34 +40,10 @@ export async function updateAction(formData: FormData, id: string) {
       };
     } else {
       // Delete the previous img first
-      // TODO: Create an utility to reuse this
-      const parts = product.image.split("/");
-      const filename = parts[parts.length - 1];
-      const imageId = filename.split(".")[0];
-      cloudinary.uploader
-        .destroy(`watches/${imageId}`)
-        .then((result) => console.log("Result", result));
+      await deleteImageFromUrl(product.image);
 
       // Image processes
-      const arrayBuffer = await image.arrayBuffer();
-      const buffer = new Uint8Array(arrayBuffer);
-      const imageResponse: any = await new Promise((resolve, reject) => {
-        cloudinary.uploader
-          .upload_stream(
-            {
-              resource_type: "auto",
-              folder: "nextjs-ecommerce",
-            },
-            async (error, result) => {
-              if (error) {
-                return reject(error.message);
-              }
-              return resolve(result);
-            }
-          )
-          .end(buffer);
-      });
-      console.log("Image response: ", imageResponse);
+      const imageResponse: any = await uploadImage(image);
 
       // Store newin Data base
       const updatedProduct = await Product.findByIdAndUpdate(id, {
