@@ -4,7 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import ProductGrid from "./ProductGrid";
 
-const Products = () => {
+const Products = ({title = 'All Products'} : {title?: string}) => {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -16,7 +16,7 @@ const Products = () => {
   return (
     <div>
       <h2 className="w-full text-center text-xl md:text-4xl font-semibold py-6">
-        All Products
+        {title}
       </h2>
       <ProductGrid products={products}/>
     </div>

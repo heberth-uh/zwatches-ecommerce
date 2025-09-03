@@ -6,6 +6,7 @@ const ProductPage = () => {
   return (
     <>
       <Product />
+      <Products title="Related Products"/>
     </>
   );
 };
