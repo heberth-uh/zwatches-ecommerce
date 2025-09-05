@@ -1,6 +1,6 @@
 # Simple Watches E-commerce
 
-**ZWatches**; - A simple e-commerce project to manage and store products. This repository only contains the **admin views,** built as a practice project for learning**Next.js**.
+**ZWatches**; - A simple e-commerce project to manage and store products.
 
 <img width="1783" height="1120" alt="image" src="https://github.com/user-attachments/assets/ca90a464-9057-4a33-bd7d-d167a472cfcc" />
 
